@@ -45,14 +45,14 @@ All scripts and data for this tutorial are available for download on [github]()
 
 ###Data for this tutorial
 
-I've stored the data for this here (change to) https://raw.githubusercontent.com/AChase44/Mussels/main/data/IDFG%202020%20oct%202%20R%20spreadsheet.csv?token=ALTRYUTVMTRZTSK4MGHNB5C72ULNM
+I've stored the data for this [here](https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial%201%20Data)
 
 ###Getting data into R
 
 If you are familiar with R, there are a few ways that data can be imported into R. More information can be found at sites such as [this one](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows one to easily pull data from websites. 
 
 ```{r data wrangling include=true}
-urlfile="https://raw.githubusercontent.com/AChase44/Mussels/main/data/IDFG%202020%20oct%202%20R%20spreadsheet.csv?token=ALTRYUTVMTRZTSK4MGHNB5C72ULNM" #bringing in data from git
+urlfile="https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial%201%20Data" #bringing in data from git
 
 mussel.data<-read_csv(urlfile) #read and name csv file
 
