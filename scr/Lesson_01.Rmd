@@ -60,13 +60,17 @@ head(mussel.data) #show data
 
 ```
 
-You may have noticed a few things from looking at the data. We have a few items that perhaps won't be useful for our analysis. What we are interested in is Western_Pearlshell and Western_Ridged distribution. We have NewLong and NewLat, so we know what the location of each of the sites is. It's an awful lot of data points, so let's get a better representation of it using a package called Mapview. 
+You may have noticed a few things from looking at the data. We have a few items that perhaps won't be useful for our analysis. What we are interested in is Western_Pearlshell and Western_Ridged distribution. We have NewLong and NewLat, so we know what the location of each of the sites is. It's an awful lot of data points, so let's get a better look at it using a package called Mapview. 
 
 ```{r}
 #Make the map https://www.jessesadler.com/post/geocoding-with-r/
 survey.locations<-st_as_sf(mussel.data,coords=c("NewLong","NewLat"),crs=4326)
 mapview(survey.locations)
 ```
+Map view is useful because it is intuitive. It allow us to drag and click, and zoom, much like googlemaps. If you zoom out, you can see we have a large cluster of data points in Idaho, where we would expect to see our data. However, there is also a lone site in Russia. We know that our data were not collected outside of Idaho, so there must have been a mistake. We either need to find out what the error was, or take note of the error and remove the data point before moving on. Generally speaking, even if we remove it, someone will have to come back and fix it later anyway. Let's see if we can figure out what went wrong. 
+
+
+That was fun, but it won't be much use for a publication, and we are a little limited with our ability to customize the look of the map. another way to do this is to use ggplot. 
 
 You may haven noticed a few things now that we can see our data ploted. each data point can be clicked on in order to see what other data are associated with it. For those of you familiar with arcgis, it is similar to clicking on a point and looking at its attributes. 
 
@@ -82,10 +86,7 @@ And now we can see that there are ranges of estimated population densities for e
 
 We know that the absence of a species is much harder to prove than the presence. So, we should keep that in mind. We can still plot these places as "not found", and we make them distinct from the places were only shells were found. We could have a scale of color hue intensity from less found to more found for the rest of the values. 
 
-Now let's map it. Let's start with creating a map you can interact with, using the package "Mapview". This will allow us to see where in the world our data are, and allow us to drag and click, and zoom, much like googlemaps. 
 
-
-That was fun, but it won't be much use for a publication, and we are a little limited with our ability to customize the look of the map. another way to do this is to use ggplot. 
 ```{r}
 #Make the map
 world <- ne_countries(scale = "medium", returnclass = "sf")
