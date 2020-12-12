@@ -7,16 +7,112 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+library("ggmap")
+library("mapview")
+library("ggplot2")
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+library("readr")
+theme_set(theme_bw())
 ```
 
-## R Markdown
+Welcome to my spatial analysis tutorial. This is the first of what I hope will build into a small library of tutorials. 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+For this Tutorial, we will just be taking spatial data and visualizing it in R. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+###Libraries needed: 
 
-```{r cars}
-summary(cars)
+ggplot2
+sf
+
+If you want to know more about each of these packages, you can type 
+
+```{r}
+help("package.name")
+
+#for example
+
+help(ggplot2)
+```
+
+There are of course a lot of different functions to packages, but we will just be focusing on a few for our purposes. 
+
+###Github repository
+
+All scripts and data for this tutorial are available for download on [github]()
+
+###Data for this tutorial
+
+I've stored the data for this here (change to) https://raw.githubusercontent.com/AChase44/Mussels/main/data/IDFG%202020%20oct%202%20R%20spreadsheet.csv?token=ALTRYUTVMTRZTSK4MGHNB5C72ULNM
+
+###Getting data into R
+
+If you are familiar with R, there are a few ways that data can be imported into R. More information can be found at sites such as [this one](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows one to easily pull data from websites. 
+
+```{r data wrangling include=true}
+urlfile="https://raw.githubusercontent.com/AChase44/Mussels/main/data/IDFG%202020%20oct%202%20R%20spreadsheet.csv?token=ALTRYUTVMTRZTSK4MGHNB5C72ULNM" #bringing in data from git
+
+mussel.data<-read_csv(urlfile) #read and name csv file
+
+head(mussel.data) #show data
+
+```
+
+You may have noticed a few things from looking at the data. We have a few items that perhaps won't be useful for our analysis. What we are interested in is Western_Pearlshell and Western_Ridged distribution. We have NewLong and NewLat, so we know what the location of each of the sites is. It's an awful lot of data points, so let's get a better representation of it using a package called Mapview. 
+
+```{r}
+#Make the map https://www.jessesadler.com/post/geocoding-with-r/
+survey.locations<-st_as_sf(mussel.data,coords=c("NewLong","NewLat"),crs=4326)
+mapview(survey.locations)
+```
+
+You may haven noticed a few things now that we can see our data ploted. each data point can be clicked on in order to see what other data are associated with it. For those of you familiar with arcgis, it is similar to clicking on a point and looking at its attributes. 
+
+something of greater interest, is that if you zoom out, you can see there is a data point in Asia. This data came from Idaho Fish and Game, so we know that can't be right. We'll have to fix it. 
+
+How do we deal with N/A values for the species we are interested in? How do we plot all the sites and how many are at places? including places where none were found? Also note that we know that there are N/A values for those columns, but what other values are there? 
+
+We can find out by using a query? to pull the unique values in each column we are interested in. 
+
+```{r}
+```
+And now we can see that there are ranges of estimated population densities for each site, sites where N/A is given, sites where only shells were found. How best to visualize this information? First, which information is most important? 
+
+We know that the absence of a species is much harder to prove than the presence. So, we should keep that in mind. We can still plot these places as "not found", and we make them distinct from the places were only shells were found. We could have a scale of color hue intensity from less found to more found for the rest of the values. 
+
+Now let's map it. Let's start with creating a map you can interact with, using the package "Mapview". This will allow us to see where in the world our data are, and allow us to drag and click, and zoom, much like googlemaps. 
+
+
+That was fun, but it won't be much use for a publication, and we are a little limited with our ability to customize the look of the map. another way to do this is to use ggplot. 
+```{r}
+#Make the map
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+ggplot(data=world+
+         geom_sf()+
+         geom_point(data=mussel.data,
+                    aes(x=longitude,y=latitude, 
+                        size=4,
+                        shape=20,
+                        fill="darkred")+
+                      coord_sf(xlim=c(-114,-115),ylim=c(44,45),
+                               expand=FALSE)
+```
+And now we have a visualization using R showing where each of these were found for the western peralsh3ell. now let's add the western ridged shell to the map. 
+```{r}
+#add those data to the map
+```
+We can make a few edits if we like, changing the scale and adding a scale bar, etc: 
+
+```{r}
+#Show these changes
+```
+And that concludes tutorial one for distribution modeling in R. Next one will show how to do some basic modeling in R. 
+```{r draft1}
+world<-ne_countries(scale="medium",returnclass="sf")
+class(world)
 ```
 
 ## Including Plots
@@ -28,3 +124,9 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+If you have any feedback for me about this tutorial, I can be reached at chas6758@vandal.uidaho.edu. (make new email?)
+
+Websites that helped me build this lesson: 
+https://www.r-spatial.org/r/2018/10/25/ggplot2-sf-2.html 
+https://rpubs.com/djhocking/155740 
