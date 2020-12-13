@@ -2,20 +2,26 @@
 title: "Lesson_01_V001"
 author: "Anna Chase"
 date: "12/2/2020"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library("rmarkdown")
+library("tinytex")
 library("tidyverse")
 library("ggmap")
-library("mapview")
 library("ggplot2")
 library("sf")
 library("rnaturalearth")
 library("rnaturalearthdata")
 library("readr")
-theme_set(theme_bw())
+library("leaflet")
+library("dplyr")
+#theme_set(theme_bw())is a good thing to include later on
 ```
 
 Welcome to my spatial analysis tutorial. This is the first of what I hope will build into a small library of tutorials. 
@@ -24,18 +30,22 @@ For this Tutorial, we will just be taking spatial data and visualizing it in R.
 
 ###Libraries needed: 
 
-ggplot2
+tidyverse
+ggmap
+mapview
+ggplot
 sf
+rnaturalearth
+rnaturalearthdata
+readr
 
 If you want to know more about each of these packages, you can type 
 
-```{r}
 help("package.name")
 
-#for example
+for example,
 
 help(ggplot2)
-```
 
 There are of course a lot of different functions to packages, but we will just be focusing on a few for our purposes. 
 
@@ -51,23 +61,73 @@ I've stored the data for this [here](https://raw.githubusercontent.com/AChase44/
 
 If you are familiar with R, there are a few ways that data can be imported into R. More information can be found at sites such as [this one](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows one to easily pull data from websites. 
 
-```{r data wrangling include=true}
+```{r echo=TRUE}
 urlfile="https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial%201%20Data" #bringing in data from git
 
 mussel.data<-read_csv(urlfile) #read and name csv file
 
 head(mussel.data) #show data
+mussel.data
 
 ```
 
-You may have noticed a few things from looking at the data. We have a few items that perhaps won't be useful for our analysis. What we are interested in is Western_Pearlshell and Western_Ridged distribution. We have NewLong and NewLat, so we know what the location of each of the sites is. It's an awful lot of data points, so let's get a better look at it using a package called Mapview. 
+You may have noticed a few things from looking at the data. We have a few items that perhaps won't be useful for our analysis. What we are interested in is Western_Pearlshell and Western_Ridged distribution. We have NewLong and NewLat, so we know what the location of each of the sites is. It's an awful lot of data points, so let's get a better look at it using a package called leaflet. 
 
+make a map with leaflet
 ```{r}
-#Make the map https://www.jessesadler.com/post/geocoding-with-r/
-survey.locations<-st_as_sf(mussel.data,coords=c("NewLong","NewLat"),crs=4326)
-mapview(survey.locations)
+library("leaflet")
+mmap<-leaflet(mussel.data)
+mmap<-addTiles(mmap)
+mmap<-addMarkers(mmap,lng=mussel.data$NewLong,lat=mussel.data$NewLat)
+mmap
 ```
+Please note: this will not properlly knit in rmarkdown unless you take certain steps. It should, however, work in a local rstudio session. It will also prevent knitting into anything other than html.See[here](https://stackoverflow.com/questions/34331964/mapview-error-in-knitr-r-markdown-document).
+
 Map view is useful because it is intuitive. It allow us to drag and click, and zoom, much like googlemaps. If you zoom out, you can see we have a large cluster of data points in Idaho, where we would expect to see our data. However, there is also a lone site in Russia. We know that our data were not collected outside of Idaho, so there must have been a mistake. We either need to find out what the error was, or take note of the error and remove the data point before moving on. Generally speaking, even if we remove it, someone will have to come back and fix it later anyway. Let's see if we can figure out what went wrong. 
+
+If we click on the errant data point, we can see that it has Feature ID 9, and that gives us a place to start. Maybe we can use [tidyverse to work with the data as it is](https://r-spatial.github.io/sf/reference/tidyverse.html), but I think it will be easier to find and edit the data point in the data frame rather than the sf. If we go back to the data set, we know that the feature ID is 9, so the row with the error is row nine. Let's just look at that line. There are several ways to delete data from data frames in R, and [some great tutorials](https://www.programmingr.com/examples/r-dataframe/add-delete-rows/) scattered around the net. We are going to use the 
+
+data.frame(row,) 
+
+```{r echo=TRUE}
+mussel.data[9,]
+```
+
+We might get a better Idea of what went wrong if we look at a couple surrounding rows. 
+```{r}
+mussel.data[8:10,]
+```
+It looks like the longitude is wrong, an error must have occured when the data was first put in. It may be fun to guess that the person who recorded the data accidentally put in the latitude values for both columns. We cannot know for sure what happened here to cause the error, but the long and lat values are very similar. We do know the name of the creek. In this situation, the best solution would be to go back to the person who recorded the data and ask them if they know the correct longitude and latitude for this data point. That solution is outside of the scope of this tutorial however, and it is not uncommon to find errors in data that does not have a good point of contact. Another solution would be to estimate where this was taken, by assuming the latitude is correct and estimating what the longitude would have to be for the data point to fall on Two-bit creek. The problem with this solution is that it assumes that the latitude is correct and we don't know if that is the case for sure. 
+
+For the purposes of this tutorial, let's omit that data point. 
+
+We can view a table that includes all of the data except for row nine by the following code: 
+
+```{r echo=TRUE}
+mussel.data[-9,]
+```
+This won't create a dataframe that omits the row though. Lets make it into a new data frame. 
+
+```{r echo=TRUE}
+no9mussel.data<-mussel.data[-9,]
+no9mussel.data
+#this method came from https://intellipaat.com/community/15599/how-to-delete-the-first-row-of-a-dataframe-in-r
+```
+
+make a map with leaflet
+```{r}
+no9mmap<-leaflet(no9mussel.data)
+no9mmap<-addTiles(no9mmap)
+no9mmap<-addMarkers(no9mmap,lng=no9mussel.data$NewLong,lat=no9mussel.data$NewLat)
+no9mmap
+```
+```
+Now when we map the data, the Russian mussel data point is ommitted. 
+
+speaing of ommitting data, what are we trying to show here? We've used visualization to find errors in our data, but what did we want this data for to begin with? 
+
+__________________________________________________________
+----------------------------------------------------------
 
 
 That was fun, but it won't be much use for a publication, and we are a little limited with our ability to customize the look of the map. another way to do this is to use ggplot. 
@@ -87,7 +147,7 @@ And now we can see that there are ranges of estimated population densities for e
 We know that the absence of a species is much harder to prove than the presence. So, we should keep that in mind. We can still plot these places as "not found", and we make them distinct from the places were only shells were found. We could have a scale of color hue intensity from less found to more found for the rest of the values. 
 
 
-```{r}
+```{r eval=FALSE}
 #Make the map
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
@@ -111,17 +171,9 @@ We can make a few edits if we like, changing the scale and adding a scale bar, e
 #Show these changes
 ```
 And that concludes tutorial one for distribution modeling in R. Next one will show how to do some basic modeling in R. 
-```{r draft1}
+```{r}
 world<-ne_countries(scale="medium",returnclass="sf")
 class(world)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -129,5 +181,7 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 If you have any feedback for me about this tutorial, I can be reached at chas6758@vandal.uidaho.edu. (make new email?)
 
 Websites that helped me build this lesson: 
-https://www.r-spatial.org/r/2018/10/25/ggplot2-sf-2.html 
-https://rpubs.com/djhocking/155740 
+[link](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf-2.html )
+[link](https://rpubs.com/djhocking/155740 )
+
+wth
