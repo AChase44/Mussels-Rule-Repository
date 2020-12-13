@@ -8,7 +8,8 @@ output:
   word_document: default
 ---
 
-```{r setup, echo=FALSE}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+#include=FALSE Should prevent all messages
 knitr::opts_chunk$set(echo = TRUE)
 library("rmarkdown")
 library("tinytex")
@@ -22,13 +23,31 @@ library("readr")
 library("leaflet")
 library("dplyr")
 #theme_set(theme_bw())is a good thing to include later on
+#need to clean this to include only the libraries that are actually used.
+#intended audience: someone who knows enough about R to install R studio, but has never used mapping functions and is fairly new to coding. The idea is to show how useful R can be even if you are not at all familiar with coding, to get new peopel excited about the posibilities. It does not assume that the person following needs to know much. The idea is that if I were reading this in highschool, I could follow along without getting lost or feeling overwhelmed. 
 ```
 
 Welcome to my spatial analysis tutorial. This is the first of what I hope will build into a small library of tutorials. 
 
-For this Tutorial, we will just be taking spatial data and visualizing it in R. 
+For this Tutorial, we will just be taking spatial data and visualizing it in R. Our Goal is to create a map that shows where mussels in Idaho have been found. 
 
-###Libraries needed: 
+### getting started with R
+
+First of all, we need to make sure R, and Rstudio is up and running. R is the program, Rstudio is a nice user interface that enables easier usage of R. I haven't created a tutorial for that yet, but there is one available [here.](https://rstudio-education.github.io/hopr/starting.html)
+
+Once Rstudio is up and running, you will need to make sure you have installed and loaded a few libraries. (what libraries are here). 
+
+you can install libraries by typing in the consol
+
+install.packages("package.name")
+
+once a package is installed, it should need installed again. however, every time you start a new session in R, you will need to load the libraries that are needed for the session. This can be done by typing 
+
+library("package.name")
+
+for each package. This may sound tedious, because it is. A better sollution is to type it into an r script file, so you can tell it to load the libraries instead of having to type it into the console each time. 
+
+We'll need the following libraries for this exercise: 
 
 tidyverse
 ggmap
@@ -39,25 +58,48 @@ rnaturalearth
 rnaturalearthdata
 readr
 
-If you want to know more about each of these packages, you can type 
+so the first part of my r script looks like this:
 
+```{r echo=TRUE}
+library("rmarkdown")
+library("tinytex")
+library("tidyverse")
+library("ggmap")
+library("ggplot2")
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+library("readr")
+library("leaflet")
+library("dplyr")
+```
+If you type this into a script file in rstudio, you can tell it to run the script and it will load these libraries. To do this you can click the run button, or use the keyboard shortcut ctrl+enter. 
+
+(make this section have smaller text.)ctrl+enter will run any code that the cursor is on, or that is highlighted. it is a fast way to run a few specific lines of code. if you want to run the entire script, a fast way to do that is to press ctrl+a in order to select the entire code, and then press ctrl+enter. 
+
+each one of these packages does a lot of things. We won't be using their full functionality in this tutorial, but you can learn more about what each one can do by typing 
+
+```{r echo=TRUE, eval=FALSE}
 help("package.name")
+```
+into the console and pressing enter to run the code.
 
-for example,
+for example, typing
 
-help(ggplot2)
+```{r echo=TRUE, eval=FALSE}
+help("ggplot2")
+```
+into the console and pressing enter to run it will bring up a description of the package in the help window in the lower right of the screen. 
 
-There are of course a lot of different functions to packages, but we will just be focusing on a few for our purposes. 
+### Data for tutorial
 
-###Github repository
+*All scripts and data for this tutorial are available for download on [github](https://github.com/AChase44/Mussels-Rule-Repository).*
 
-All scripts and data for this tutorial are available for download on [github]()
+### Data for this tutorial
 
-###Data for this tutorial
+I've stored the data for this [here](https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial%201%20Data). This is raw data from Idaho Fish and Game surveys. (probably should not include all the data, or alter it if it is publically available before website is live. Ask Travis?) There are a lot of rules for how to make sure data is ready to import into R, which I will cover in another tutorial. This data is ready to go so we can start visualizing it. 
 
-I've stored the data for this [here](https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial%201%20Data)
-
-###Getting data into R
+### Getting data into R
 
 If you are familiar with R, there are a few ways that data can be imported into R. More information can be found at sites such as [this one](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows one to easily pull data from websites. 
 
@@ -76,28 +118,67 @@ You may have noticed a few things from looking at the data. We have a few items 
 make a map with leaflet
 ```{r}
 library("leaflet")
-mmap<-leaflet(mussel.data)
-mmap<-addTiles(mmap)
-mmap<-addMarkers(mmap,lng=mussel.data$NewLong,lat=mussel.data$NewLat)
-mmap
+mmap<-leaflet(mussel.data) #leafelt knows to use mussel.data. "mmap" stands for "mussel map". 
+mmap<-addTiles(mmap) #we add background tiles to the map
+mmap<-addMarkers(mmap,lng=~NewLong,lat=~NewLat) #this adds point data from our mussel.data dataframe.
+mmap #displays the map. 
 ```
-Please note: this will not properlly knit in rmarkdown unless you take certain steps. It should, however, work in a local rstudio session. It will also prevent knitting into anything other than html.See[here](https://stackoverflow.com/questions/34331964/mapview-error-in-knitr-r-markdown-document).
 
-Map view is useful because it is intuitive. It allow us to drag and click, and zoom, much like googlemaps. If you zoom out, you can see we have a large cluster of data points in Idaho, where we would expect to see our data. However, there is also a lone site in Russia. We know that our data were not collected outside of Idaho, so there must have been a mistake. We either need to find out what the error was, or take note of the error and remove the data point before moving on. Generally speaking, even if we remove it, someone will have to come back and fix it later anyway. Let's see if we can figure out what went wrong. 
+Leaflet is useful because it is intuitive and interactive. It allow us to drag and click, and zoom, much like googlemaps. If you zoom out, you can see we have a large cluster of data points in Idaho, where we would expect to see our data. However, there is also a lone site in Russia. We know that our data were not collected outside of Idaho, so there must have been a mistake. We either need to find out what the error was, or take note of the error and remove the data point before moving on. Generally speaking, even if we remove it, someone will have to come back and fix it later anyway. Let's see if we can figure out what went wrong. 
 
-If we click on the errant data point, we can see that it has Feature ID 9, and that gives us a place to start. Maybe we can use [tidyverse to work with the data as it is](https://r-spatial.github.io/sf/reference/tidyverse.html), but I think it will be easier to find and edit the data point in the data frame rather than the sf. If we go back to the data set, we know that the feature ID is 9, so the row with the error is row nine. Let's just look at that line. There are several ways to delete data from data frames in R, and [some great tutorials](https://www.programmingr.com/examples/r-dataframe/add-delete-rows/) scattered around the net. We are going to use the 
+Right now there is no way to know what point belongs to what row of data. However, we can tell leaflet to label each of the data points, by changing the code just a little bit. 
 
-data.frame(row,) 
+```{r}
+
+mmap<-addMarkers(mmap,lng=~NewLong,lat=~NewLat,popup=~as.character(stream), label = ~as.character(stream))
+mmap
+
+```
+uh-oh! we got an error message. Let's see what could be going on. It says stream does not exist. Let's check our data column names to see if we spelled it wrong. 
+```{r}
+head(mussel.data)
+```
+It is spelled the same, but R is case sensitve. We'll have to run it again with stream capitalized. 
+
+```{r}
+
+mmap<-addMarkers(mmap,lng=~NewLong,lat=~NewLat,popup=~as.character(Stream), label = ~as.character(Stream))
+mmap
+
+```
+
+there we go!
+
+If we click on the errant data point, we can see that it supposedly came from Two-bit creek, and that gives us a place to start. If we go back to the data set, we know that the stream name is Two-bit creek, so we can look at the table and try to find it visually. (There are faster ways to do this but this is one way that works for this tutorial.) 
+
+```{r}
+mussel.data
+```
+When I made this data set, I made sure it was sorted by Stream name. So by looking through this, we know that there is only one entry for Two-bit Creek. It looks like the longitude is wrong, an error must have occured when the data was first put in. It may be fun to guess that the person who recorded the data accidentally put in the latitude values for both columns. We cannot know for sure what happened here to cause the error, but the long and lat values are very similar. We do know the name of the creek. In this situation, the best solution would be to go back to the person who recorded the data and ask them if they know the correct longitude and latitude for this data point. That solution is outside of the scope of this tutorial however, and it is not uncommon to find errors in data that does not have a good point of contact. Another solution would be to estimate where this was taken, by assuming the latitude is correct and estimating what the longitude would have to be for the data point to fall on Two-bit creek. The problem with this solution is that it assumes that the latitude is correct and we don't know if that is the case for sure. If we know what row it is in, we can remove it. R stores data.tables in such a way that each row below the column names have their own numerical identification. we can call and look at each of the rows or columns that we want by using the following code:
+
+data.frame(row,column) 
+
+where data.frame is the name of our data frame (mussel.data) and the row and columns are refered to by numbers. for instance, if we wanted to look at data in the first row and the first column of mussel.data, we would type 
 
 ```{r echo=TRUE}
-mussel.data[9,]
+mussel.data[1,1]
 ```
+which in this case is just "American River".
 
-We might get a better Idea of what went wrong if we look at a couple surrounding rows. 
+We can also call several rows of data. For example, we could call the first 3 rows of column 1:
 ```{r}
-mussel.data[8:10,]
+mussel.data[1:3,1]
 ```
-It looks like the longitude is wrong, an error must have occured when the data was first put in. It may be fun to guess that the person who recorded the data accidentally put in the latitude values for both columns. We cannot know for sure what happened here to cause the error, but the long and lat values are very similar. We do know the name of the creek. In this situation, the best solution would be to go back to the person who recorded the data and ask them if they know the correct longitude and latitude for this data point. That solution is outside of the scope of this tutorial however, and it is not uncommon to find errors in data that does not have a good point of contact. Another solution would be to estimate where this was taken, by assuming the latitude is correct and estimating what the longitude would have to be for the data point to fall on Two-bit creek. The problem with this solution is that it assumes that the latitude is correct and we don't know if that is the case for sure. 
+the colon tells us that we want from rows 1 "to"3.
+
+we can also call the first few rows with all data included. 
+
+```{r}
+mussel.data[1:3,]
+```
+And this time, the colon still tells us that we want from rows 1 "to"3, and by leaving the space after the comma empty, we are saying we want all of the columns. 
+
+By counting down the rows, we know that the errant data point is in row 9. 
 
 For the purposes of this tutorial, let's omit that data point. 
 
@@ -106,13 +187,16 @@ We can view a table that includes all of the data except for row nine by the fol
 ```{r echo=TRUE}
 mussel.data[-9,]
 ```
-This won't create a dataframe that omits the row though. Lets make it into a new data frame. 
+This won't create a data.frame that omits the row though. Lets make it into a new data frame. 
 
 ```{r echo=TRUE}
 no9mussel.data<-mussel.data[-9,]
 no9mussel.data
 #this method came from https://intellipaat.com/community/15599/how-to-delete-the-first-row-of-a-dataframe-in-r
 ```
+
+So now we've fixed our data without having to leave R. (again, there are faster ways to do the same thing, but that's outside the scope of this tutorial.)
+
 
 make a map with leaflet
 ```{r}
@@ -124,64 +208,13 @@ no9mmap
 ```
 Now when we map the data, the Russian mussel data point is ommitted. 
 
-speaing of ommitting data, what are we trying to show here? We've used visualization to find errors in our data, but what did we want this data for to begin with? 
+but that's not quite all I had in mind. This map is interactive, and we have labels showing where the streams are, but what about all our other data? We know that some streams have mussels and some do not. 
+
+#notes for further editing tomorrow: edit the data such that it doesn't include any columns we don't want to work with.strata, date, etc. Make sure that this tutorial makes sense and won't lead students down dead ends-show them the right way to do data editing, and if there is a better way, make sure you don't imply that the way we show here is the only or the best way. check with old lecture for data wrangling, and with other tutorials. 
+
+for final map, I want each location that lacks mussels to be a questionmark, and every location that has mussels to be a little picture of a mussel. we should also see about putting in a topographic background layer. 
+
+Again, our goal is to: Get newbies more comfortable working in R, show them that they can use R for data visualization, and to get them prepped for the next tutorial. I want an 8th grader to be able to follow along. Build something I never had as a kid-a friendly programming tutorial for future scientists. 
 
 __________________________________________________________
 ----------------------------------------------------------
-
-
-That was fun, but it won't be much use for a publication, and we are a little limited with our ability to customize the look of the map. another way to do this is to use ggplot. 
-
-You may haven noticed a few things now that we can see our data ploted. each data point can be clicked on in order to see what other data are associated with it. For those of you familiar with arcgis, it is similar to clicking on a point and looking at its attributes. 
-
-something of greater interest, is that if you zoom out, you can see there is a data point in Asia. This data came from Idaho Fish and Game, so we know that can't be right. We'll have to fix it. 
-
-How do we deal with N/A values for the species we are interested in? How do we plot all the sites and how many are at places? including places where none were found? Also note that we know that there are N/A values for those columns, but what other values are there? 
-
-We can find out by using a query? to pull the unique values in each column we are interested in. 
-
-```{r}
-```
-And now we can see that there are ranges of estimated population densities for each site, sites where N/A is given, sites where only shells were found. How best to visualize this information? First, which information is most important? 
-
-We know that the absence of a species is much harder to prove than the presence. So, we should keep that in mind. We can still plot these places as "not found", and we make them distinct from the places were only shells were found. We could have a scale of color hue intensity from less found to more found for the rest of the values. 
-
-
-```{r eval=FALSE}
-#Make the map
-world <- ne_countries(scale = "medium", returnclass = "sf")
-class(world)
-ggplot(data=world+
-         geom_sf()+
-         geom_point(data=mussel.data,
-                    aes(x=longitude,y=latitude, 
-                        size=4,
-                        shape=20,
-                        fill="darkred")+
-                      coord_sf(xlim=c(-114,-115),ylim=c(44,45),
-                               expand=FALSE)
-```
-And now we have a visualization using R showing where each of these were found for the western peralsh3ell. now let's add the western ridged shell to the map. 
-```{r}
-#add those data to the map
-```
-We can make a few edits if we like, changing the scale and adding a scale bar, etc: 
-
-```{r}
-#Show these changes
-```
-And that concludes tutorial one for distribution modeling in R. Next one will show how to do some basic modeling in R. 
-```{r}
-world<-ne_countries(scale="medium",returnclass="sf")
-class(world)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-If you have any feedback for me about this tutorial, I can be reached at chas6758@vandal.uidaho.edu. (make new email?)
-
-Websites that helped me build this lesson: 
-[link](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf-2.html )
-[link](https://rpubs.com/djhocking/155740 )
-
-wth
