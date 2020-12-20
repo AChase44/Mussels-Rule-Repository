@@ -4,8 +4,8 @@ author: ""
 date: ""
 always_allow_html: true
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 ---
 
@@ -185,7 +185,7 @@ If you are familiar with Excel, you are used to using workbooks with cells in co
 For now, note that R cannot import .xlsx files (the default filetype for excel), but it can import .csv files. The data we will be using today is saved as a .csv file. .csv files can be imported into R as a **dataframe**, which is one way that R reads and stores data. R stores data as vectors, but if you ask R to show you a dataframe, it looks and functions much like a table in excel will. It's easy to think of it as a table, but be sure to remember that it is in fact called a dataframe, and has different properties than a table or other ways of storing data. Certain packages and functions won't work with tables but will work with dataframes, which makes it an important distinction.
 
 There are a few ways that data can be imported into R. More information can be found at sites such as [this one](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows us to pull data directly from websites, as a subtype of dataframe called a tibble.
-```{r echo=FALSE, eval=TRUE}
+```{r echo=FALSE, eval=TRUE, message=FALSE}
 mussel.data<-read_csv("https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial_1.csv") 
 #read file into an R data.frame, names the dataframe mussel.data. 
 ```
@@ -236,6 +236,8 @@ mmap<-leaflet(mussel.data)
 mmap #shows us the map
 ```
 
+![](C:\Users\Anna\Pictures\FISH_504_Pics\PDF1.PNG)
+
 AAH! That isn't helpful at all! Sometimes when learning new functions from new packages, it is easy to make mistakes that at first seem catastrophic. 
 
 What happened is that leaflet is a set of functions that work additively. We told leaflet to use the dataframe mussel.data, but we didn't tell it anything else. It needs to know more before it can tell us something useful, like if we want markers, what columns have the latitude and longitude data for said markers, and what kind of background tiles we want for our map. We already made this thing called mmap, and we can just keep adding to it, by using the <- symbol and more functions from the leaflet package. 
@@ -246,11 +248,15 @@ mmap #displays mmap
 ```
 Telling it we wanted a background with addTiles(mmap) gave us a nice background. let's add our data points with the leaflet function addMarkers(). 
 
+![](C:\Users\Anna\Pictures\FISH_504_Pics\PDF2.PNG)
+
 ```{r echo=TRUE}
 mmap<-addMarkers(mmap,lng=~NewLong,lat=~NewLat) #this adds point data from our 
 #mussel.data dataframe, and tells leaflet which columns the spatial data are stored in.
 mmap #displays mmap. 
 ```
+
+![](C:\Users\Anna\Pictures\FISH_504_Pics\PDF3.PNG)
 
 It may seem like I pulled those additional lines of code out of thin air. However, that's not the case. Leaflet has a [really good website](https://leafletjs.com/) with guides regarding how to use its codes. It's easy to feel lost because it can seem like there are invisible rules regarding how to code for what you want, and in some ways that is true. Coding is a language, like any other it requires memorization and practice to master. The only way to get good at using a package is read about how to use it, from documentation or from a tutorial, and then experiment with what you learn. 
 
@@ -267,8 +273,12 @@ mmap #show the map
 ```
 ![](C:\Users\Anna\Pictures\FISH_504_Pics\RStudio_12.PNG)
 uh-oh! we got an error message. Let's see what could be going on. It says stream does not exist. Let's check our data column names again to see if we spelled it wrong. 
-```{r}
+```{r echo=TRUE, eval=FALSE}
 head(mussel.data)
+```
+```{r echo=FALSE, eval=TRUE}
+headmussel<-head(mussel.data)
+kbl(headmussel,booktabs=T)
 ```
 It is spelled the same, but R is case sensitive. We'll have to run it again with stream capitalized. 
 
@@ -279,6 +289,7 @@ mmap<-addMarkers(mmap,lng=~NewLong,lat=~NewLat,popup=~as.character(Stream),
 mmap #show us the map
 
 ```
+![](C:\Users\Anna\Pictures\FISH_504_Pics\PDF4.PNG)
 
 there we go!
 
@@ -288,8 +299,10 @@ If we mouse over the errant data point, we can see that it came from Two-bit cre
 view(mussel.data)
 ```
 
-```{r echo=FALSE}
-head(mussel.data)
+
+```{r echo=FALSE, eval=TRUE}
+Musseltable<-mussel.data[1:12,]
+kbl(Musseltable,booktabs=T)
 ```
 Because we know that when this data set was made it was sorted by stream name, we know that there is only one entry for Two-bit Creek. It looks like the longitude is wrong, an error must have occurred when the data was first put in. It may be fun to guess that the person who recorded the data accidentally put in the latitude values for both columns. We cannot know for sure what happened here to cause the error, but the long and lat values are very similar. We do know the name of the creek. In this situation, the best solution would be to go back to the person who recorded the data and ask them if they know the correct longitude and latitude for this data point. That solution is outside of the scope of this tutorial however, and it is not uncommon to find errors in data that does not have a good point of contact. Another solution would be to estimate where this was taken, by assuming the latitude is correct and estimating what the longitude would have to be for the data point to fall on Two-bit creek. The problem with this solution is that it assumes that the latitude is correct and we don't know if that is the case for sure. 
 
@@ -299,21 +312,33 @@ data.frame(row,column)
 
 where data.frame is the name of our dataframe (mussel.data) and the row and columns are referred to by numbers. for instance, if we wanted to look at data in the first row and the first column of mussel.data, we would type 
 
-```{r echo=TRUE}
+```{r echo=TRUE, eval=FALSE}
 mussel.data[1,1]
+```
+```{r echo=FALSE, eval=TRUE}
+Musseltable<-mussel.data[1,1]
+kbl(Musseltable,booktabs=T)
 ```
 which in this case is just "American River".
 
 We can also call several rows of data. For example, we could call the first 3 rows of column 1:
-```{r echo=TRUE}
+```{r echo=TRUE, eval=FALSE}
 mussel.data[1:3,1]
+```
+```{r echo=FALSE, eval=TRUE}
+Musseltable<-mussel.data[1:3,1]
+kbl(Musseltable,booktabs=T)
 ```
 the colon tells us that we want from rows 1 "to"3.
 
 we can also call the first few rows with all columns included. 
 
-```{r echo=TRUE}
+```{r echo=TRUE, eval=FALSE}
 mussel.data[1:3,]
+```
+```{r echo=FALSE, eval=TRUE}
+Musseltable<-mussel.data[1:3,]
+kbl(Musseltable,booktabs=T)
 ```
 And this time, the colon still tells us that we want from rows 1 "to" 3, and by leaving the space after the comma empty, we are saying we want all of the columns. 
 
@@ -323,14 +348,25 @@ For the purposes of this tutorial, let's omit that data point, using a method fr
 
 We can view a table that includes all of the data except for row nine by the following code: 
 
-```{r echo=TRUE}
+```{r echo=TRUE,eval=FALSE}
 mussel.data[-9,]
+```
+```{r echo=FALSE, eval=TRUE}
+Musselno9<-mussel.data[-9,]
+musselno9<-Musselno9[1:12,]
+kbl(musselno9,booktabs=T)
 ```
 What this does is it says I want everything from the mussel.data dataframe, except for row 9. This just displays the dataframe without row nine, it does not actually change mussel.data. But, we can use this to create a new dataframe that does not have row nine. 
 
-```{r echo=TRUE}
+```{r echo=TRUE, eval=FALSE}
 no9mussel.data<-mussel.data[-9,]
 no9mussel.data
+```
+```{r echo=FALSE, eval=TRUE}
+Musselno9<-mussel.data[-9,]
+musselno9<-Musselno9[1:12,]
+kbl(musselno9,booktabs=T)
+no9mussel.data<-mussel.data[-9,]
 ```
 
 Here we told R that we want to make mussel.data without row 9 into a new dataframe called no9mussel.data. 
@@ -344,6 +380,8 @@ no9mmap<-addMarkers(no9mmap,lng=~NewLong,lat=~NewLat,popup=~as.character(Stream)
                     label = ~as.character(Stream))
 no9mmap
 ```
+
+![](C:\Users\Anna\Pictures\FISH_504_Pics\PDF5.PNG)
 
 Now when we map the data, the Russian mussel data point is omitted. We have successfully created a map of our data points.
 
