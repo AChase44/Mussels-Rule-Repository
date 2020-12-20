@@ -22,7 +22,9 @@ library("kableExtra")
 
 ```
 
-*All scripts and data for this tutorial are available for download on [github](https://github.com/AChase44/Mussels-Rule-Repository).*
+*tutorial written by Anna Chase.*
+
+*All scripts and data for this tutorial are available for download on [[github]](https://github.com/AChase44/Mussels-Rule-Repository).*
 
 # Purpose of this Tutorial
 
@@ -48,9 +50,9 @@ R can do more with data in general. Can excel be used to generate a map from dat
 
 In order to continue with the tutorial, you will need to install Rstudio and R on your computer. 
 
-The most recent version of R can be downloaded by going [here](https://cran.r-project.org/). Or, if you prefer a direct link, click [here for the Windows version](https://cran.r-project.org/bin/windows/base/R-4.0.3-win.exe), or [here for the Mac OS version](https://cran.r-project.org/bin/macosx/R-4.0.3.pkg). Once downloaded, click on the file and it will allow you to install it like any other software. RStudio can be downloaded from [here](https://rstudio.com/products/rstudio/), and installed by clicking on the file. 
+The most recent version of R can be downloaded by going [[here]](https://cran.r-project.org/). Or, if you prefer a direct link, click [[here for the Windows version]](https://cran.r-project.org/bin/windows/base/R-4.0.3-win.exe), or [[here for the Mac OS version]](https://cran.r-project.org/bin/macosx/R-4.0.3.pkg). Once downloaded, click on the file and it will allow you to install it like any other software. RStudio can be downloaded from [[here]](https://rstudio.com/products/rstudio/), and installed by clicking on the file. 
 
-There is a great tutorial [here](https://rstudio-education.github.io/hopr/starting.html) for installing R and RStudio if you want a more detailed walkthrough. 
+There is a great tutorial [[here]](https://rstudio-education.github.io/hopr/starting.html) for installing R and RStudio if you want a more detailed walkthrough. 
 
 # Using R for the first time Scripts, lines of code, and comments.
 
@@ -66,7 +68,7 @@ RStudio didn't understand the phrase "I like cats" so it returned an error code.
 
 ![](C:\Users\Anna\Pictures\FISH_504_Pics\RStudio_03.PNG)
 
-And it has other functions programed into it, such as the [poisson](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Poisson.html) function, which allows calculating the poisson approximation. 
+And it has other functions programed into it, such as the [[poisson]](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Poisson.html) function, which allows calculating the poisson approximation. 
 
 Each time we type into the console and hit enter, it will try to use what was typed in to do something. These instructions are called lines of code. They are called lines of code because every line is a complete instruction, and any instructions we want to give RStudio are sent in line by line. Typing code over and over again gets tedious fast though, so usually codes are stored in scripts. A script stores lines of typed text much the same as a word document, but in a different type of file so that R can understand it. You could save your code in a word or text document and then cut and paste into the console every time you want to run it, but I like using the RStudio's script file better. 
 
@@ -88,7 +90,7 @@ If I run a script, the consol will take each line in numerical order according t
 
 ![](C:\Users\Anna\Pictures\FISH_504_Pics\RStudio_07.PNG)
 
-And that's how a script works. It stores lines of code that you can run in order through a console. It is the foundation for how to code in R, for how to use R and RStudio. A more comprehensive introduction to R and its capabilities can be found [here](https://rspatial.org/intr/1-introduction.html), including how to do many things that are commonly done in excel. Our goal here is to make a map though, so let's keep moving. 
+And that's how a script works. It stores lines of code that you can run in order through a console. It is the foundation for how to code in R, for how to use R and RStudio. A more comprehensive introduction to R and its capabilities can be found [[here]](https://rspatial.org/intr/1-introduction.html), including how to do many things that are commonly done in excel. Our goal here is to make a map though, so let's keep moving. 
 
 # packages, libraries, and documentation
 
@@ -164,7 +166,7 @@ into the console and pressing enter to run it will bring up a description of the
 
 ![](C:\Users\Anna\Pictures\FISH_504_Pics\RStudio_09.PNG)
 
-Which brings us to another important term-**documentation**. What it is actually showing is the documentation for the package ggplot2. Every package has documentation, which tells us about who made the package, what it does, how to use it, and how it works. If you are like me, you might be thinking right now, that's great! I can just go to documentation and it will always explain to me how to use the software and do what I am trying to do. This is true, but, especially if you are newer to programming, there might be a lot of jargon that is hard to understand. Don't be afraid to google the name of the package or look for answers to your question online if the documentation is difficult to parse. There are plenty of great tutorials outside of documentation, such as [this one](http://benbestphd.com/R-adv-spatial-lessons/interactive.html) that can show you how to use packages to their fullest potential. 
+Which brings us to another important term-**documentation**. What it is actually showing is the documentation for the package ggplot2. Every package has documentation, which tells us about who made the package, what it does, how to use it, and how it works. If you are like me, you might be thinking right now, that's great! I can just go to documentation and it will always explain to me how to use the software and do what I am trying to do. This is true, but, especially if you are newer to programming, there might be a lot of jargon that is hard to understand. Don't be afraid to google the name of the package or look for answers to your question online if the documentation is difficult to parse. There are plenty of great tutorials outside of documentation, such as [[this one]](http://benbestphd.com/R-adv-spatial-lessons/interactive.html) that can show you how to use packages to their fullest potential. 
 
 Speaking of documentation, if you want to have a note in your code that won't cause an error in Rstudio, you can put in a comment by using the # symbol:
 
@@ -180,11 +182,11 @@ Now that we know how to install and load packages, let's move on to importing so
 
 ### Getting data into R
 
-If you are familiar with Excel, you are used to using workbooks with cells in columns and rows. R does data a little differently, which is explained really well [here](https://rspatial.org/intr/2-basic-data-types.html). 
+If you are familiar with Excel, you are used to using workbooks with cells in columns and rows. R does data a little differently, which is explained really well [[here]](https://rspatial.org/intr/2-basic-data-types.html). 
 
 For now, note that R cannot import .xlsx files (the default filetype for excel), but it can import .csv files. The data we will be using today is saved as a .csv file. .csv files can be imported into R as a **dataframe**, which is one way that R reads and stores data. R stores data as vectors, but if you ask R to show you a dataframe, it looks and functions much like a table in excel will. It's easy to think of it as a table, but be sure to remember that it is in fact called a dataframe, and has different properties than a table or other ways of storing data. Certain packages and functions won't work with tables but will work with dataframes, which makes it an important distinction.
 
-There are a few ways that data can be imported into R. More information can be found at sites such as [this one](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows us to pull data directly from websites, as a subtype of dataframe called a tibble.
+There are a few ways that data can be imported into R. More information can be found at sites such as [[this one]](https://www.statmethods.net/input/importingdata.html), but let's go ahead and look at one way of bringing the data in. We are going to use a package called readr, which allows us to pull data directly from websites, as a subtype of dataframe called a tibble.
 ```{r echo=FALSE, eval=TRUE, message=FALSE}
 mussel.data<-read_csv("https://raw.githubusercontent.com/AChase44/Mussels-Rule-Repository/master/data/Tutorial_1.csv") 
 #read file into an R data.frame, names the dataframe mussel.data. 
@@ -258,7 +260,7 @@ mmap #displays mmap.
 
 ![](C:\Users\Anna\Pictures\FISH_504_Pics\PDF3.PNG)
 
-It may seem like I pulled those additional lines of code out of thin air. However, that's not the case. Leaflet has a [really good website](https://leafletjs.com/) with guides regarding how to use its codes. It's easy to feel lost because it can seem like there are invisible rules regarding how to code for what you want, and in some ways that is true. Coding is a language, like any other it requires memorization and practice to master. The only way to get good at using a package is read about how to use it, from documentation or from a tutorial, and then experiment with what you learn. 
+It may seem like I pulled those additional lines of code out of thin air. However, that's not the case. Leaflet has a [[really good website]](https://leafletjs.com/) with guides regarding how to use its codes. It's easy to feel lost because it can seem like there are invisible rules regarding how to code for what you want, and in some ways that is true. Coding is a language, like any other it requires memorization and practice to master. The only way to get good at using a package is read about how to use it, from documentation or from a tutorial, and then experiment with what you learn. 
 
 Leaflet is useful because it is intuitive and interactive. It allow us to drag and click, and zoom, much like googlemaps, but with our own data. If you zoom out, you can see we have a large cluster of data points in Idaho, where we know our data were collected. However, there is also a lone site in Russia. We know that our data were not collected outside of Idaho, so there must have been a mistake. We either need to find out what the error was, or take note of the error and remove the data point before moving on. Generally speaking, even if we remove it, someone will have to come back and fix it later anyway. Let's see if we can figure out what went wrong. 
 
@@ -344,7 +346,7 @@ And this time, the colon still tells us that we want from rows 1 "to" 3, and by 
 
 By counting down the rows, we know that the errant data point is in row 9. 
 
-For the purposes of this tutorial, let's omit that data point, using a method from [here](https://intellipaat.com/community/15599/how-to-delete-the-first-row-of-a-dataframe-in-r).
+For the purposes of this tutorial, let's omit that data point, using a method from [[here]](https://intellipaat.com/community/15599/how-to-delete-the-first-row-of-a-dataframe-in-r).
 
 We can view a table that includes all of the data except for row nine by the following code: 
 
@@ -401,6 +403,16 @@ What would you have to change in this code to make it work correctly?
 Install.Packages("Leaflet")
 ```
 
+## coding challenge level 1
 
+This challenge, if you wish to accept it, is to create a map just like the one we did in this tutorial-but with your own csv datafile. Use some data that has meaning to you-where your favorite people were born, the most important places you have visited throughout your life, or something else that matters to you.
+
+Hint: Refer to [[this webpage]](https://www.statmethods.net/input/importingdata.html) for guidance on how to import your own data.
+
+## coding challenge level 2
+
+The challenge, if you wish to accept it, is to find a way to change the icon for the points on the map to an image of your choosing. 
+
+Hint: Refer to [[this webpage]](https://leafletjs.com/) for guidance on how to use the package leaflet. 
 
 

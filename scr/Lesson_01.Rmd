@@ -22,6 +22,8 @@ library("kableExtra")
 
 ```
 
+*tutorial written by Anna Chase.*
+
 *All scripts and data for this tutorial are available for download on [github](https://github.com/AChase44/Mussels-Rule-Repository).*
 
 # Purpose of this Tutorial
@@ -362,6 +364,18 @@ What would you have to change in this code to make it work correctly?
 ```{r echo=TRUE, eval=FALSE}
 Install.Packages("Leaflet")
 ```
+
+## coding challenge level 1
+
+This challenge, if you wish to accept it, is to create a map just like the one we did in this tutorial-but with your own csv datafile. Use some data that has meaning to you-where your favorite people were born, the most important places you have visited throughout your life, or something else that matters to you.
+
+Hint: Refer to [[this webpage]](https://www.statmethods.net/input/importingdata.html) for guidance on how to import your own data.
+
+## coding challenge level 2
+
+The challenge, if you wish to accept it, is to find a way to change the icon for the points on the map to an image of your choosing. 
+
+Hint: Refer to [[this webpage]](https://leafletjs.com/) for guidance on how to use the package leaflet. 
 
 
 
